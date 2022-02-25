@@ -7,7 +7,18 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    
+    @sort = params[:sort]
+    @movies = Movie.all.order(@sort)
+    
+    # sort = params[sort]
+    # case sort
+    # when 'title'
+    #     @movies = Movie.order('title ASC')
+    #   when 'release_date'
+    #     @movies = Movie.order('release_date ASC')
+    # end
+    
   end
 
   def new
@@ -23,7 +34,7 @@ class MoviesController < ApplicationController
   def edit
     @movie = Movie.find params[:id]
   end
-
+  
   def update
     @movie = Movie.find params[:id]
     @movie.update_attributes!(movie_params)

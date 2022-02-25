@@ -6,7 +6,7 @@
 <table class="table table-striped col-md-12" id="movies">
   <thead>
     <tr>
-      <th><a id="title_header" class="link">Movie Title</a></th>
+      <th> <%= link_to "Movie Title", movies_path(sort:'title'), id:'title_header' %></th>
       <th>Rating</th>
       <th><a id="release_date_header" class="link">Release Date</a></th>
       <th>More Info</th>
