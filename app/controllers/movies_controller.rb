@@ -7,7 +7,7 @@ class MoviesController < ApplicationController
   end
 
   def index
-    
+    session.clear unless request.url.include? "/movies"
     # @sort = params[:sort] || session[:sort]
     # if @sort == 'title'
     #   @title_class = 'hilite'
@@ -27,12 +27,20 @@ class MoviesController < ApplicationController
     @sort = params[:sort] if params[:sort]
     # session[:ratings] = @p_ratings
     # session[:sort] = @sort
+    
+    if @sort
+      @movies = Movie.where(rating: @p_ratings).order(@sort)
+    else
+      @movies = Movie.all
+      @movies = Movie.where(rating: @p_ratings)
+    end
+    # @movies = Movie.where(rating: @p_ratings).order(@sort)
     session[:ratings] = params[:ratings] if !session[:ratings]
-    session[:sort] = params[:sort] if !session[:sort]
+    session[:sort] = params[:sort] if params[:sort]
   
     # params[:sort] = session[:sort] if !params[:sort]
 
-    @movies = Movie.where(rating: @p_ratings).order(@sort)
+
     
     # redirect_to movies_path(sort: @sort, ratings: @p_ratings)
     
