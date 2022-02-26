@@ -8,20 +8,52 @@ class MoviesController < ApplicationController
 
   def index
     
-    @sort = params[:sort]
+    # @sort = params[:sort] || session[:sort]
     # if @sort == 'title'
     #   @title_class = 'hilite'
     # elsif @sort =='release_date'
     #   @title_header = 'hilite'
     # end
     @all_ratings = Movie.ratings
-    params[:ratings].nil? ? @p_ratings = @all_ratings : @p_ratings = params[:ratings].keys 
-    if @sort
-      @movies = Movie.where(rating: @p_ratings).order(@sort)
-    else
-      @movies = Movie.all
-      @movies = Movie.where(rating: @p_ratings)
+    @p_ratings = @all_ratings
+    # session[:ratings] = session[:ratings] || @all_ratings
+    # params[:ratings].nil? ? @p_ratings = session[:ratings] : @p_ratings = params[:ratings].keys
+    # params[:ratings]? @p_ratings = params[:ratings].keys : @p_ratings = session[:ratings] 
+    # params[:sort]?  @sort = params[:sort] : @sort  = session[:sort]
+    # params[:sort] = @sort
+    
+    @p_ratings = params[:ratings].keys if params[:ratings] 
+    # params[:ratings]? @p_ratings = params[:ratings].keys : @p_rating = @all_ratings
+    @sort = params[:sort] if params[:sort]
+    # session[:ratings] = @p_ratings
+    # session[:sort] = @sort
+    session[:ratings] = params[:ratings] if !session[:ratings]
+    session[:sort] = params[:sort] if !session[:sort]
+  
+    # params[:sort] = session[:sort] if !params[:sort]
+
+    @movies = Movie.where(rating: @p_ratings).order(@sort)
+    
+    # redirect_to movies_path(sort: @sort, ratings: @p_ratings)
+    
+    # if @sort || @p_ratings
+    #   @movies = Movie.where(rating: @p_ratings).order(@sort)
+    # else
+    #   # @movies = Movie.all
+    #   @movies = Movie.where(rating: @p_ratings).order(@sort)
+    # end
+  
+    if (!params[:sort] && !params[:ratings]) && (session[:sort] && session[:ratings])
+      flash.keep
+      return redirect_to movies_path(sort: session[:sort], ratings: session[:ratings])
+    elsif !params[:sort] && session[:sort]
+      flash.keep
+      return redirect_to movies_path(sort: session[:sort], ratings: params[:ratings])
+    elsif !params[:ratings] && session[:ratings]
+      flash.keep
+      return redirect_to movies_path(sort: params[:sort], ratings: session[:ratings])
     end
+    
 
     
 
